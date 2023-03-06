@@ -22,10 +22,6 @@ jobs:
         run: |
           npm install
           npm run build
-          cd demo
-          npm install
-          npm run build
-          rm -rf node_modules
 
       - id: npmjsVersion
         name: Extract version from package.json
