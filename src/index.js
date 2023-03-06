@@ -12,6 +12,11 @@ class CodeMirrorEditor extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: 'closed' });
     this.appendChild(this.shadow);
+
+    const style = document.createElement('style');
+    style.innerHTML = `:host { all: initial }`;
+    this.shadow.appendChild(style);
+
     this.themeCompartment = new Compartment();
     this.baseTheme = EditorView.baseTheme();
   }
