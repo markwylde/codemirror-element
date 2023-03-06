@@ -1,0 +1,30 @@
+{
+  "name": "codemirror-element",
+  "version": "1.0.0",
+  "description": "The codemirror editor wrapped in a custom element",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "esbuild --bundle src/index.js --outfile=dist/CodeMirrorEditor.js --loader:.ttf=file --minify --sourcemap && cp src/index.html dist/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": {
+    "email": "me@markwylde.com",
+    "name": "Mark Wylde",
+    "url": "https://github.com/markwylde"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@codemirror/commands": "^6.2.1",
+    "@codemirror/lang-javascript": "^6.1.4",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/theme-one-dark": "^6.1.1",
+    "@codemirror/view": "^6.9.1",
+    "codemirror": "^6.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.11",
+    "eslint": "^8.35.0",
+    "eslint-config-standard": "^17.0.0"
+  }
+}
