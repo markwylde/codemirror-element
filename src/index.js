@@ -1,3 +1,4 @@
+import debounce from 'debounce';
 import { basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -15,12 +16,24 @@ class CodeMirrorEditor extends HTMLElement {
     this.baseTheme = EditorView.baseTheme();
   }
 
+  handleChange () {
+    const event = new CustomEvent('change', this);
+    this.dispatchEvent(event);
+  }
+
   connectedCallback () {
     const value = this.getAttribute('value');
 
     const element = document.createElement('div');
     element.style.height = '500px';
     this.shadow.appendChild(element);
+
+    const executeDebounce = debounce(this.handleChange.bind(this), 500);
+    element.addEventListener('input', executeDebounce);
+    element.addEventListener('change', executeDebounce);
+    element.addEventListener('keypress', executeDebounce);
+    element.addEventListener('keyup', executeDebounce);
+    element.addEventListener('paste', executeDebounce);
 
     this.editorTheme = new Compartment();
 

@@ -7,5 +7,12 @@
 </head>
 <body>
   <codemirror-editor value="function main () {}"></codemirror-editor>
+
+  <script>
+    const element = document.body.querySelector('codemirror-editor')
+    element.addEventListener('change', event => {
+      console.log('new value is', event.target.value);
+    });
+  </script>
 </body>
 </html>

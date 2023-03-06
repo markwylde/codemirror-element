@@ -22,5 +22,41 @@ The codemirror editor wrapped in a custom element.
 </html>
 ```
 
+## API
+
+### theme
+You can switch between the `light` and `dark` theme by setting the `theme` attribute on the element.
+
+```html
+<codemirror-editor theme="light"></codemirror-editor>
+<codemirror-editor theme="dark"></codemirror-editor>
+```
+
+```js
+document.body.querySelector('codemirror-editor').theme = 'light';
+document.body.querySelector('codemirror-editor').theme = 'dark';
+```
+
+### value
+You can read and update the `value` by setting the `value` attribute on the element.
+
+```html
+<codemirror-editor value="const two = 1 + 1;"></codemirror-editor>
+```
+
+```js
+document.body.querySelector('codemirror-editor').value = 'const two = 1 + 1;';
+```
+
+### changes
+You can listen for changes by adding a `change` event listener to the element.
+
+```js
+const element = document.body.querySelector('codemirror-editor')
+element.addEventListener('change', event => {
+  console.log('new value is', event.target.value);
+});
+```
+
 ## License
 This project is licensed under the terms of the MIT license.
