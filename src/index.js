@@ -22,7 +22,7 @@ class CodeMirrorEditor extends HTMLElement {
   }
 
   connectedCallback () {
-    const value = this.getAttribute('value');
+    const value = this._value;
 
     const element = document.createElement('div');
     this.shadow.appendChild(element);
@@ -58,6 +58,8 @@ class CodeMirrorEditor extends HTMLElement {
   }
 
   set value (newValue) {
+    this._value = newValue;
+
     if (!this.view) {
       return;
     }
