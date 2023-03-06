@@ -25,7 +25,6 @@ class CodeMirrorEditor extends HTMLElement {
     const value = this.getAttribute('value');
 
     const element = document.createElement('div');
-    element.style.height = '500px';
     this.shadow.appendChild(element);
 
     const executeDebounce = debounce(this.handleChange.bind(this), 500);
