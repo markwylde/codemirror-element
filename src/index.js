@@ -17,7 +17,7 @@ class CodeMirrorEditor extends HTMLElement {
   }
 
   handleChange () {
-    const event = new CustomEvent('change', this);
+    const event = new CustomEvent('change');
     this.dispatchEvent(event);
   }
 
