@@ -4,7 +4,7 @@ The codemirror editor wrapped in a custom element.
 
 ## Example
 
-[Demo app](https://markwylde.com/codemirror-element/1.1.4/)
+[Demo app](https://markwylde.com/codemirror-element/1.1.5/)
 
 ## Usage
 
@@ -14,7 +14,7 @@ The codemirror editor wrapped in a custom element.
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CodeMirror Element</title>
-  <script src="https://markwylde.com/codemirror-element/1.1.4/CodeMirrorEditor.js"></script>
+  <script src="https://markwylde.com/codemirror-element/1.1.5/CodeMirrorEditor.js"></script>
 </head>
 <body>
   <codemirror-editor value="function main () {}"></codemirror-editor>

@@ -1,4 +1,3 @@
-import debounce from 'debounce';
 import { basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -10,11 +9,11 @@ class CodeMirrorEditor extends HTMLElement {
 
   constructor () {
     super();
-    this.shadow = this.attachShadow({ mode: 'closed' });
+    this.shadow = this.attachShadow({ mode: 'open' });
     this.appendChild(this.shadow);
 
     const style = document.createElement('style');
-    style.innerHTML = `:host { all: initial }`;
+    style.innerHTML = ':host { all: initial }';
     this.shadow.appendChild(style);
 
     this.themeCompartment = new Compartment();
@@ -32,12 +31,20 @@ class CodeMirrorEditor extends HTMLElement {
     const element = document.createElement('div');
     this.shadow.appendChild(element);
 
-    const executeDebounce = debounce(this.handleChange.bind(this), 500);
-    element.addEventListener('input', executeDebounce);
-    element.addEventListener('change', executeDebounce);
-    element.addEventListener('keypress', executeDebounce);
-    element.addEventListener('keyup', executeDebounce);
-    element.addEventListener('paste', executeDebounce);
+    const handleChange = () => {
+      if (this._value === this.value) {
+        return;
+      }
+
+      this._value = this.value;
+      this.handleChange();
+    };
+
+    element.addEventListener('input', handleChange);
+    element.addEventListener('change', handleChange);
+    element.addEventListener('keypress', handleChange);
+    element.addEventListener('keyup', handleChange);
+    element.addEventListener('paste', handleChange);
 
     this.editorTheme = new Compartment();
 
@@ -77,6 +84,8 @@ class CodeMirrorEditor extends HTMLElement {
     this.view.setState(this.startState);
 
     this.theme = this._theme;
+
+    this.handleChange();
   }
 
   get theme () {
