@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeMirror Element Demo</title>
+  <script src="CodeMirrorEditor.js"></script>
+</head>
+<body>
+  <codemirror-editor value="function main () {}"></codemirror-editor>
+
+  <script>
+    const element = document.body.querySelector('codemirror-editor')
+    element.enableLint({
+      parserOptions: {
+        ecmaVersion: 2019,
+        sourceType: 'module'
+      },
+      env: {
+        browser: true,
+        node: true,
+        es6: true,
+        es2015: true,
+        es2017: true,
+        es2020: true
+      },
+      rules: {
+        ...element.defaultLintRules,
+        semi: ['error', 'never']
+      }
+    });
+    element.addEventListener('change', event => {
+      console.log('new value is', event.target.value);
+    });
+  </script>
+</body>
+</html>
