@@ -1,8 +1,19 @@
 import { basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
-import { javascript } from '@codemirror/lang-javascript';
+import { EditorView, keymap } from '@codemirror/view';
+import { javascript, esLint } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { linter, lintKeymap, lintGutter } from '@codemirror/lint';
+import { Linter } from 'eslint-linter-browserify';
+
+const defaultRules = Array.from(new Linter().getRules()).reduce((defaultRules, entry) => {
+  const [key, value] = entry;
+  if (value.meta.docs.recommended) {
+    defaultRules[key] = 2;
+  }
+
+  return defaultRules;
+}, { });
 
 class CodeMirrorEditor extends HTMLElement {
   static get observedAttributes () { return ['theme', 'value']; }
@@ -20,16 +31,40 @@ class CodeMirrorEditor extends HTMLElement {
     this.baseTheme = EditorView.baseTheme();
   }
 
+  get defaultLintRules () {
+    return defaultRules;
+  }
+
   handleChange () {
     const event = new CustomEvent('change');
     this.dispatchEvent(event);
   }
 
-  connectedCallback () {
-    const value = this._value;
+  createState () {
+    return EditorState.create({
+      doc: this._value || '',
+      extensions: [
+        ...[
+          this.baseTheme,
+          this.themeCompartment.of(this.baseTheme),
+          basicSetup,
+          javascript()
+        ],
 
-    const element = document.createElement('div');
-    this.shadow.appendChild(element);
+        ...(this.lint
+          ? [
+              keymap.of([...lintKeymap]),
+              lintGutter(),
+              linter(esLint(this.linter, this.lint))
+            ]
+          : [])
+      ]
+    });
+  }
+
+  connectedCallback () {
+    this.element = document.createElement('div');
+    this.shadow.appendChild(this.element);
 
     const handleChange = () => {
       if (this._value === this.value) {
@@ -40,29 +75,53 @@ class CodeMirrorEditor extends HTMLElement {
       this.handleChange();
     };
 
-    element.addEventListener('input', handleChange);
-    element.addEventListener('change', handleChange);
-    element.addEventListener('keypress', handleChange);
-    element.addEventListener('keyup', handleChange);
-    element.addEventListener('paste', handleChange);
+    this.element.addEventListener('input', handleChange);
+    this.element.addEventListener('change', handleChange);
+    this.element.addEventListener('keypress', handleChange);
+    this.element.addEventListener('keyup', handleChange);
+    this.element.addEventListener('paste', handleChange);
 
     this.editorTheme = new Compartment();
-
-    this.startState = EditorState.create({
-      doc: value || '',
-      extensions: [this.baseTheme, this.themeCompartment.of(this.baseTheme), basicSetup, javascript()]
-    });
-
-    this.view = new EditorView({
-      state: this.startState,
-      parent: element
-    });
-
     this.theme = this.getAttribute('theme');
+    this.linter = new Linter({ cwd: '/' });
+
+    this.syncState();
+  }
+
+  syncState () {
+    if (!this.element) {
+      return;
+    }
+
+    const state = this.createState();
+
+    if (!this.view) {
+      this.view = new EditorView({
+        state,
+        parent: this.element
+      });
+      return;
+    }
+
+    this.view.setState(state);
   }
 
   attributeChangedCallback (name, oldValue, newValue) {
     this[name] = newValue;
+    this.syncState();
+  }
+
+  enableLint (config) {
+    this.lint = config;
+    this.syncState();
+  }
+
+  verifyLint () {
+    if (!this.lint) {
+      throw new Error('linting must be enabled to run verifyLint');
+    }
+
+    return this.linter.verify(this.value, this.lint);
   }
 
   get value () {
@@ -76,12 +135,7 @@ class CodeMirrorEditor extends HTMLElement {
       return;
     }
 
-    this.startState = EditorState.create({
-      doc: newValue,
-      extensions: [this.baseTheme, this.themeCompartment.of(this.baseTheme), basicSetup, javascript()]
-    });
-
-    this.view.setState(this.startState);
+    this.syncState();
 
     this.theme = this._theme;
 
@@ -93,6 +147,10 @@ class CodeMirrorEditor extends HTMLElement {
   }
 
   set theme (newTheme) {
+    if (!this.view) {
+      return;
+    }
+
     this._theme = newTheme || 'light';
 
     if (this._theme === 'light') {
