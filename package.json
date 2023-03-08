@@ -5,8 +5,8 @@
   "description": "The codemirror editor wrapped in a custom element",
   "main": "src/index.js",
   "scripts": {
-    "build": "cp src/index.html dist/index.html && esbuild --bundle src/index.js --outfile=dist/CodeMirrorEditor.js --loader:.ttf=file --minify --sourcemap",
-    "start": "cp src/index.html dist/index.html && esbuild --servedir=dist --bundle src/index.js --outfile=dist/CodeMirrorEditor.js --loader:.ttf=file --minify --sourcemap",
+    "build": "mkdir -p dist && cp src/index.html dist/index.html && esbuild --bundle src/index.js --outfile=dist/CodeMirrorEditor.js --loader:.ttf=file --minify --sourcemap",
+    "start": "mkdir -p dist && cp src/index.html dist/index.html && esbuild --servedir=dist --bundle src/index.js --outfile=dist/CodeMirrorEditor.js --loader:.ttf=file --minify --sourcemap",
     "test": "node test/"
   },
   "keywords": [],
