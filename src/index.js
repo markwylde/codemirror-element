@@ -130,6 +130,9 @@ class CodeMirrorEditor extends HTMLElement {
 
   set value (newValue) {
     const hasChanged = this._value !== newValue;
+    if (!hasChanged) {
+      return;
+    }
 
     this._value = newValue;
 
@@ -141,9 +144,7 @@ class CodeMirrorEditor extends HTMLElement {
 
     this.theme = this._theme;
 
-    if (hasChanged) {
-      this.handleChange();
-    }
+    this.handleChange();
   }
 
   get theme () {
